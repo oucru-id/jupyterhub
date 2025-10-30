@@ -230,3 +230,23 @@ c.Spawner.start_timeout = 60
 c.Spawner.environment = {
     'JUPYTERHUB_SINGLEUSER_APP': 'jupyter_server.serverapp.ServerApp',
 }
+
+# Idle server culling configuration
+# Cull idle servers after 30 minutes of inactivity
+c.JupyterHub.services = [
+    {
+        'name': 'idle-culler',
+        'command': [
+            'python3', '-m', 'jupyterhub_idle_culler',
+            '--timeout=1800',  # 30 minutes in seconds
+            '--cull-every=300',  # Check every 5 minutes
+            '--max-age=7200',  # Maximum server age: 2 hours
+            '--remove-named-servers',  # Also remove named servers
+        ],
+        'admin': True,  # Give the service admin privileges
+    }
+]
+
+# Alternative: Simple idle timeout (uncomment to use instead of idle-culler service)
+# c.Spawner.http_timeout = 1800  # 30 minutes
+# c.Spawner.start_timeout = 300  # 5 minutes to start

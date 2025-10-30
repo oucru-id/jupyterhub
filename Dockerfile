@@ -9,6 +9,8 @@ RUN apt-get update && apt-get install -y \
     vim \
     build-essential \
     curl \
+    libcurl4-openssl-dev \
+    libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # ---------- Install Node.js ----------
@@ -21,7 +23,9 @@ WORKDIR /srv/jupyterhub
 RUN pip install --no-cache-dir \
     jupyterhub \
     jupyterlab \
-    notebook
+    notebook \
+    jupyterhub-idle-culler \
+    pycurl
 
 # ---------- Install configurable-http-proxy ----------
 RUN npm install -g configurable-http-proxy
