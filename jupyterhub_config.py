@@ -2,6 +2,9 @@
 
 c = get_config()
 
+# Configure custom templates directory
+c.JupyterHub.template_paths = ['/srv/jupyterhub/templates']
+
 # Custom authenticator that can create users
 import subprocess
 import os
