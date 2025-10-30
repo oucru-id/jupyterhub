@@ -99,6 +99,89 @@ class SetPasswordPageHandler(BaseHandler):
         self.write(html_content)
         self.set_header('Content-Type', 'text/html')
 
+class ChangePasswordHandler(BaseHandler):
+    """Handler for users to change their own passwords"""
+    
+    async def post(self):
+        """Change password for the current user"""
+        # Check if user is authenticated
+        current_user = self.current_user
+        if not current_user:
+            self.set_status(401)
+            self.write({'status': 'error', 'message': 'Authentication required'})
+            return
+            
+        try:
+            data = json.loads(self.request.body.decode('utf-8'))
+            current_password = data.get('current_password')
+            new_password = data.get('new_password')
+            
+            if not current_password or not new_password:
+                self.set_status(400)
+                self.write({'status': 'error', 'message': 'Current password and new password required'})
+                return
+            
+            username = current_user.name
+            
+            # Verify current password using PAM
+            try:
+                # Use subprocess to verify password with su command
+                result = subprocess.run([
+                    'su', '-c', 'echo "Password verified"', username
+                ], input=current_password, text=True, capture_output=True, timeout=10)
+                
+                if result.returncode != 0:
+                    self.set_status(400)
+                    self.set_header('Content-Type', 'application/json')
+                    self.write({'status': 'error', 'message': 'Current password is incorrect'})
+                    return
+            except subprocess.TimeoutExpired:
+                self.set_status(400)
+                self.set_header('Content-Type', 'application/json')
+                self.write({'status': 'error', 'message': 'Password verification timeout'})
+                return
+            except Exception as verify_error:
+                self.set_status(500)
+                self.set_header('Content-Type', 'application/json')
+                self.write({'status': 'error', 'message': f'Password verification failed: {verify_error}'})
+                return
+            
+            # Set the new password
+            subprocess.run([
+                'bash', '-c', f'echo "{username}:{new_password}" | chpasswd'
+            ], check=True)
+            
+            # Remove password expiry if it was set
+            subprocess.run([
+                'chage', '-d', '-1', username
+            ], check=True)
+            
+            self.set_header('Content-Type', 'application/json')
+            self.write({'status': 'success', 'message': 'Password changed successfully'})
+        except subprocess.CalledProcessError as e:
+            self.set_status(500)
+            self.set_header('Content-Type', 'application/json')
+            self.write({'status': 'error', 'message': f'Failed to change password: {e}'})
+        except Exception as e:
+            self.set_status(400)
+            self.set_header('Content-Type', 'application/json')
+            self.write({'status': 'error', 'message': str(e)})
+
+class ChangePasswordPageHandler(BaseHandler):
+    """Handler to serve the password change page"""
+    
+    async def get(self):
+        """Serve the password change HTML page"""
+        # Check if user is authenticated
+        current_user = self.current_user
+        if not current_user:
+            raise web.HTTPError(401, "Authentication required")
+            
+        with open('/srv/jupyterhub/templates/change_password.html', 'r') as f:
+            html_content = f.read()
+        self.write(html_content)
+        self.set_header('Content-Type', 'text/html')
+
 # Use our custom authenticator
 c.JupyterHub.authenticator_class = CustomPAMAuthenticator
 
@@ -106,6 +189,8 @@ c.JupyterHub.authenticator_class = CustomPAMAuthenticator
 c.JupyterHub.extra_handlers = [
     (r'/api/set-password', SetPasswordHandler),
     (r'/set-password', SetPasswordPageHandler),
+    (r'/api/change-password', ChangePasswordHandler),
+    (r'/change-password', ChangePasswordPageHandler),
 ]
 
 # Each user spawns a local JupyterLab process inside this same container
