@@ -1,0 +1,12 @@
+services:
+  jupyterhub:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${JUPYTERHUB_PORT:-8000}:${JUPYTERHUB_PORT:-8000}"
+    volumes:
+      - ./data:/srv/jupyterhub
+      - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
+      - ./templates:/srv/jupyterhub/templates
+      - ./home:/home
