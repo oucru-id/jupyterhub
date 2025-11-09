@@ -27,7 +27,7 @@ services:
       # All containers will join this network
       DOCKER_NETWORK_NAME: jupyterhub-network
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_JUPYTER_IMAGE: "jupyter/base-notebook:latest"
+      DOCKER_JUPYTER_IMAGE: "oucru-id/jupyterlab:latest"
       JUPYTERHUB_COOKIE_SECRET: 5cd19102ec69b19b5dd97284a422b58ef2a4d7329fd28f91d525c084653eb9b3
     command: ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
 
