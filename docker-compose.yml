@@ -15,22 +15,21 @@ services:
       # Bind Docker socket on the host so we can connect to the daemon from
       # within the container
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
-      # Bind Docker volume on host for JupyterHub database and cookie secrets
-      - "jupyterhub-data:/data"
+      # Bind Docker volume on host for JupyterHub database
+      - "./jupyterhub-data:/srv/jupyterhub/data"
+      - "./user-data:/srv/jupyterhub/user-data"
     ports:
       - "8000:8000"
     user: root
     environment:
       # This username will be a JupyterHub admin
       JUPYTERHUB_ADMIN: admin
-      ADMIN_USER: admin
-      ADMIN_PASSWORD: password
       # All containers will join this network
       DOCKER_NETWORK_NAME: jupyterhub-network
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_NOTEBOOK_IMAGE: quay.io/jupyter/base-notebook:latest
-      # Notebook directory inside user image
-      DOCKER_NOTEBOOK_DIR: /home/jovyan/work
+      DOCKER_JUPYTER_IMAGE: "jupyter/base-notebook:latest"
+      JUPYTERHUB_COOKIE_SECRET: 5cd19102ec69b19b5dd97284a422b58ef2a4d7329fd28f91d525c084653eb9b3
+    command: ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
 
 volumes:
   jupyterhub-data:
