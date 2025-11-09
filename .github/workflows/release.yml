@@ -54,7 +54,7 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
           build-args: |
-            JUPYTER_IMAGE_VERSION=latest
+            JUPYTERHUB_VERSION=latest
 
   create-release:
     name: Create GitHub Release
