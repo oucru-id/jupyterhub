@@ -46,7 +46,11 @@ RUN echo "# Allow sudo group to run most commands" >> /etc/sudoers && \
 # ---------- Copy JupyterHub config and templates ----------
 COPY jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
 COPY templates/ /srv/jupyterhub/templates/
+COPY startup.sh /srv/jupyterhub/startup.sh
+
+# Make startup script executable
+RUN chmod +x /srv/jupyterhub/startup.sh
 
 # ---------- Expose and run ----------
 EXPOSE 8000
-CMD ["tini", "--", "jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
+ENTRYPOINT ["/srv/jupyterhub/startup.sh"]

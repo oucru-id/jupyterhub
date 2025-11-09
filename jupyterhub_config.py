@@ -5,6 +5,9 @@ c = get_config()
 # Configure custom templates directory
 c.JupyterHub.template_paths = ['/srv/jupyterhub/templates']
 
+# Redirect users to hub home instead of auto-spawning servers
+c.JupyterHub.redirect_to_server = False
+
 # Custom authenticator that can create users
 import subprocess
 import os
@@ -223,8 +226,8 @@ c.Spawner.cwd = '~'
 c.JupyterHub.bind_url = 'http://:8000'
 
 # Database and cookie files (local SQLite)
-c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/jupyterhub_cookie_secret'
-c.JupyterHub.db_url = 'sqlite:////srv/jupyterhub/jupyterhub.sqlite'
+c.JupyterHub.cookie_secret_file = '/srv/jupyterhub/data/jupyterhub_cookie_secret'
+c.JupyterHub.db_url = 'sqlite:////srv/jupyterhub/data/jupyterhub.sqlite'
 
 # Increase timeout for spawner startup
 c.Spawner.start_timeout = 60

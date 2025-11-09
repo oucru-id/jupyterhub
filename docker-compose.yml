@@ -6,7 +6,9 @@ services:
     ports:
       - "${JUPYTERHUB_PORT:-8000}:${JUPYTERHUB_PORT:-8000}"
     volumes:
-      - ./data:/srv/jupyterhub
+      - ./data:/srv/jupyterhub/data
       - ./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py
       - ./templates:/srv/jupyterhub/templates
       - ./home:/home
+    environment:
+      - JUPYTERHUB_CRYPT_KEY=${JUPYTERHUB_CRYPT_KEY:-}
