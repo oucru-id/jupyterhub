@@ -53,6 +53,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
+          build-args: |
+            JUPYTER_IMAGE_VERSION=latest
 
   create-release:
     name: Create GitHub Release
