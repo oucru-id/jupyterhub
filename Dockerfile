@@ -7,4 +7,5 @@ RUN apt-get update -y && apt-get install -y libpam-dev python3-dev build-essenti
 # hadolint ignore=DL3013
 RUN python3 -m pip install --no-cache-dir \
     dockerspawner \
-    jupyterhub-nativeauthenticator
+    jupyterhub-nativeauthenticator \
+    jupyterhub-idle-culler

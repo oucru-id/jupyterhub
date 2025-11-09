@@ -40,6 +40,20 @@ c.DockerSpawner.extra_create_kwargs = {"working_dir": "/home/jovyan/work"}
 # Remove containers once they are stopped
 c.DockerSpawner.remove = True
 
+# Idle culler configuration
+c.JupyterHub.services = [
+    {
+        "name": "idle-culler",
+        "admin": True,
+        "command": [
+            "python3",
+            "-m",
+            "jupyterhub_idle_culler",
+            "--timeout=1800",
+        ],
+    }
+]
+
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = True
 
