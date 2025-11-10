@@ -66,6 +66,7 @@ def create_system_user(spawner):
         pwd.getpwnam(username)
     except KeyError:
         subprocess.check_call(['useradd', '-ms', '/bin/bash', '-G', 'sudo', username])
+        subprocess.check_call(['chown', '-R', f'{username}:{username}', f'/home/{username}'])
 
 c.Spawner.pre_spawn_hook = create_system_user
 c.JupyterHub.template_paths = [f"{os.path.dirname(nativeauthenticator.__file__)}/templates/"]
