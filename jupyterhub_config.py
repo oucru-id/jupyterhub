@@ -63,6 +63,7 @@ c.JupyterHub.services = [
             "-m",
             "jupyterhub_idle_culler",
             "--timeout=1800",
+            "--cull-every=600",
         ],
     }
 ]
