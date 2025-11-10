@@ -35,7 +35,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = {"jupyterhub-user-{username}": notebook_dir}
+c.DockerSpawner.volumes = {"jupyterlab-user-{username}": notebook_dir}
 
 # Set the working directory to the notebook directory
 c.DockerSpawner.extra_create_kwargs = {"working_dir": notebook_dir}
