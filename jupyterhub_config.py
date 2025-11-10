@@ -33,7 +33,7 @@ c.DockerSpawner.network_name = network_name
 notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR") or "/home/jovyan/work"
 c.DockerSpawner.notebook_dir = notebook_dir
 c.DockerSpawner.volumes = {
-    "/Users/chiqors/Documents/Office/jupyterhub/user-data/{username}": notebook_dir
+    "jupyterhub-user-data": notebook_dir
 }
 c.DockerSpawner.extra_create_kwargs = {"working_dir": "/home/jovyan/work"}
 c.DockerSpawner.environment = {"GRANT_SUDO": "yes"}

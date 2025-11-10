@@ -17,7 +17,6 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database
       - "./jupyterhub-data:/srv/jupyterhub/data"
-      - "./user-data:/srv/jupyterhub/user-data"
     ports:
       - "8000:8000"
     user: root
@@ -27,10 +26,14 @@ services:
       # All containers will join this network
       DOCKER_NETWORK_NAME: jupyterhub-network
       # JupyterHub will spawn this Notebook image for users
-      DOCKER_JUPYTER_IMAGE: "ghcr.io/oucru-id/jupyterlab:latest"
+      DOCKER_JUPYTER_IMAGE: "jupyter/base-notebook:latest"
       JUPYTERHUB_COOKIE_SECRET: 5cd19102ec69b19b5dd97284a422b58ef2a4d7329fd28f91d525c084653eb9b3
     command: ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
 
 networks:
   jupyterhub-network:
     name: jupyterhub-network
+
+volumes:
+  jupyterhub-user-data:
+    name: jupyterhub-user-data
