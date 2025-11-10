@@ -42,10 +42,22 @@ c.DockerSpawner.environment = {"GRANT_SUDO": "yes"}
 c.DockerSpawner.remove = True
 
 # Idle culler configuration
+c.JupyterHub.load_roles = [
+    {
+        "name": "jupyterhub-idle-culler-role",
+        "scopes": [
+            "list:users",
+            "read:users:activity",
+            "read:servers",
+            "delete:servers",
+        ],
+        "services": ["idle-culler"],
+    }
+]
+
 c.JupyterHub.services = [
     {
         "name": "idle-culler",
-        "admin": True,
         "command": [
             "python3",
             "-m",
