@@ -7,33 +7,22 @@ services:
     restart: always
     image: jupyterhub
     container_name: jupyterhub
-    networks:
-      - jupyterhub-network
     volumes:
       # The JupyterHub configuration file
       - "./jupyterhub_config.py:/srv/jupyterhub/jupyterhub_config.py:ro"
-      # Bind Docker socket on the host so we can connect to the daemon from
-      # within the container
-      - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database
       - "./jupyterhub-data:/srv/jupyterhub/data"
+      # Bind User Home Directory
+      - "jupyter-user-data:/home"
     ports:
       - "8000:8000"
     user: root
     environment:
       # This username will be a JupyterHub admin
       JUPYTERHUB_ADMIN: admin
-      # All containers will join this network
-      DOCKER_NETWORK_NAME: jupyterhub-network
-      # JupyterHub will spawn this Notebook image for users
-      DOCKER_JUPYTER_IMAGE: "jupyter/base-notebook:latest"
       JUPYTERHUB_COOKIE_SECRET: 5cd19102ec69b19b5dd97284a422b58ef2a4d7329fd28f91d525c084653eb9b3
     command: ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
 
-networks:
-  jupyterhub-network:
-    name: jupyterhub-network
-
 volumes:
-  jupyterhub-user-data:
-    name: jupyterhub-user-data
+  jupyter-user-data:
+    name: jupyter-user-data

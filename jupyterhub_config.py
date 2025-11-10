@@ -15,31 +15,8 @@ c = get_config()  # noqa: F821
 # Redirect users to hub home instead of auto-spawning servers
 c.JupyterHub.redirect_to_server = True
 
-# Spawn single-user servers as Docker containers
-c.JupyterHub.spawner_class = "dockerspawner.DockerSpawner"
-
-# Spawn containers from this image
-c.DockerSpawner.image = os.environ["DOCKER_JUPYTER_IMAGE"]
-
-# Connect containers to this Docker network
-network_name = os.environ["DOCKER_NETWORK_NAME"]
-c.DockerSpawner.use_internal_ip = True
-c.DockerSpawner.network_name = network_name
-
-# Explicitly set notebook directory because we'll be mounting a volume to it.
-# Most `jupyter/docker-stacks` *-notebook images run the Notebook server as
-# user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
-# We follow the same convention.
-notebook_dir = os.environ.get("DOCKER_NOTEBOOK_DIR") or "/home/jovyan"
-c.DockerSpawner.notebook_dir = notebook_dir
-c.DockerSpawner.volumes = {
-    "jupyterhub-user-data": "/home/jovyan"
-}
-c.DockerSpawner.extra_create_kwargs = {"working_dir": "/home/jovyan"}
-c.DockerSpawner.environment = {"GRANT_SUDO": "yes"}
-
-# Remove containers once they are stopped
-c.DockerSpawner.remove = True
+# Spawn single-user servers locally
+c.JupyterHub.spawner_class = 'jupyterhub.spawner.LocalProcessSpawner'
 
 # Idle culler configuration
 c.JupyterHub.load_roles = [
@@ -68,11 +45,8 @@ c.JupyterHub.services = [
     }
 ]
 
-# For debugging arguments passed to spawned containers
-c.DockerSpawner.debug = False
-
 # User containers will access hub by container name on the Docker network
-c.JupyterHub.hub_ip = "jupyterhub"
+c.JupyterHub.hub_ip = "127.0.0.1"
 c.JupyterHub.hub_port = 8080
 
 # Persist hub data on volume mounted inside container
@@ -84,6 +58,16 @@ c.Authenticator.allow_all = True
 
 # Authenticate users with Native Authenticator
 c.JupyterHub.authenticator_class = 'native'
+import pwd
+import subprocess
+def create_system_user(spawner):
+    username = spawner.user.name
+    try:
+        pwd.getpwnam(username)
+    except KeyError:
+        subprocess.check_call(['useradd', '-ms', '/bin/bash', '-G', 'sudo', username])
+
+c.Spawner.pre_spawn_hook = create_system_user
 c.JupyterHub.template_paths = [f"{os.path.dirname(nativeauthenticator.__file__)}/templates/"]
 c.NativeAuthenticator.open_signup = False
 c.NativeAuthenticator.ask_email_on_signup = True
