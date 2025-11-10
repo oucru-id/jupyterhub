@@ -36,7 +36,7 @@ c.DockerSpawner.volumes = {
     "/Users/chiqors/Documents/Office/jupyterhub/user-data/{username}": notebook_dir
 }
 c.DockerSpawner.extra_create_kwargs = {"working_dir": "/home/jovyan/work"}
-c.DockerSpawner.extra_environment = {"GRANT_SUDO": "yes"}
+c.DockerSpawner.environment = {"GRANT_SUDO": "yes"}
 
 # Remove containers once they are stopped
 c.DockerSpawner.remove = True
@@ -56,7 +56,7 @@ c.JupyterHub.services = [
 ]
 
 # For debugging arguments passed to spawned containers
-c.DockerSpawner.debug = False
+c.DockerSpawner.debug = True
 
 # User containers will access hub by container name on the Docker network
 c.JupyterHub.hub_ip = "jupyterhub"
