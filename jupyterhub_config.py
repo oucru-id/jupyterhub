@@ -36,6 +36,7 @@ c.DockerSpawner.volumes = {
     "/Users/chiqors/Documents/Office/jupyterhub/user-data/{username}": notebook_dir
 }
 c.DockerSpawner.extra_create_kwargs = {"working_dir": "/home/jovyan/work"}
+c.DockerSpawner.extra_environment = {"GRANT_SUDO": "yes"}
 
 # Remove containers once they are stopped
 c.DockerSpawner.remove = True
