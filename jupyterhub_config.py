@@ -35,7 +35,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = {"jupyterlab-user-{username}": notebook_dir}
+c.DockerSpawner.volumes = {"jupyterhub-user-{username}": notebook_dir}
 
 # Set the working directory to the notebook directory
 c.DockerSpawner.extra_create_kwargs = {"working_dir": notebook_dir}
@@ -50,32 +50,7 @@ c.DockerSpawner.environment = {
 # Remove containers once they are stopped
 c.DockerSpawner.remove = True
 
-# Idle culler configuration
-c.JupyterHub.load_roles = [
-    {
-        "name": "jupyterhub-idle-culler-role",
-        "scopes": [
-            "list:users",
-            "read:users:activity",
-            "read:servers",
-            "delete:servers",
-        ],
-        "services": ["idle-culler"],
-    }
-]
-
-c.JupyterHub.services = [
-    {
-        "name": "idle-culler",
-        "command": [
-            "python3",
-            "-m",
-            "jupyterhub_idle_culler",
-            "--timeout=1800",
-            "--cull-every=600",
-        ],
-    }
-]
+c.JupyterHub.services = []
 
 # For debugging arguments passed to spawned containers
 c.DockerSpawner.debug = False
